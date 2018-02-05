@@ -29,13 +29,13 @@ if [[ "$SHELL" == *'zsh' && -e "$HOME/.zpreztorc" ]]; then
 
 else 
   echo "Not running zsh with prezto"
-  echo "Skipping Prezto Update"
+  echo "Skipping Prezto Update..."
 fi 
+printf '\n'
 sleep 2
 
 # Homebrew update
 if hash brew 2>/dev/null; then
-  echo "Brew Exists"
   
   # brew update formulae and homebrew itself
   echo "================================"
@@ -89,6 +89,45 @@ if hash brew 2>/dev/null; then
     [[ "$0" = "$BASH_SOURCE" ]] && exit 1 || return 1 
     # handle exits from shell or function but dont exit interactive shell
   fi
+else
+  echo "Homebrew is not installed, skipping..."
 fi
 
+printf '\n'
+sleep 2
+# Finish Homebrew Update
+
+# MacOS Built-In Software update
+echo "================================"
+echo " Update MacOS Software and OS"
+echo "================================"
+
+# get list of available software to update
+softup=`softwareupdate -l 2>&1` # no new software logs to stderr
+if [[ $softup =~ "No new software available" ]]; then
+  #echo "check success"
+  echo "$softup" # echo output of check
+  echo "Skipping softwareupdate"
+  printf '\n'
+else
+  echo "$softup" # echo output of available updates
+  printf '\n'
+  # Check if softwareupdate is wanted
+  read -p "Do you want to update MacOS and software? (y/n)" -n 1 -r
+    if [[ $REPLY =~ ^[Yy]$ ]]; then
+      printf '\n'
+      echo "Updating OS & Mac Software"
+      sudo softwareupdate -i -a
+
+    elif [[ ! $REPLY =~ ^[Yy]$ ]]; then
+      printf '\n'
+      echo "Skipping Softwareupdate"
+
+      [[ "$0" = "$BASH_SOURCE" ]] && exit 1 || return 1 
+      # handle exits from shell or function but dont exit interactive shell
+    fi
+fi
+printf '\n'
+sleep 2
+# Finish MacOS Softwareupdate
 
