@@ -131,3 +131,35 @@ printf '\n'
 sleep 2
 # Finish MacOS Softwareupdate
 
+# pip update
+if hash pip 2>/dev/null; then
+
+  echo "================================"
+  echo " Update Python pip Packages"
+  echo "================================"
+	printf '\n'
+	echo "Check for all installed pip packages"
+	echo "____________________________________"
+	# check all pip packages
+	pip freeze --local | grep -v '^\-e' | cut -d = -f 1
+	printf '\n'
+
+	# ask if want to continue pip update
+  read -p "Do you want to attempt to update the above pip packages? (y/n)" -n 1 -r
+  if [[ $REPLY =~ ^[Yy]$ ]]; then
+		printf '\n'
+    echo "Updating pip packages"
+  	pip freeze --local | grep -v '^\-e' | cut -d = -f 1 | xargs -n1 pip install -U
+
+	# cancel pip update
+  elif [[ ! $REPLY =~ ^[Yy]$ ]]; then
+		printf '\n'
+    echo "Skipping pip update"
+    [[ "$0" = "$BASH_SOURCE" ]] && exit 1 || return 1 
+    # handle exits from shell or function but dont exit interactive shell
+  fi
+fi
+printf '\n'
+sleep 2
+# Finish pip update
+
