@@ -45,20 +45,20 @@ sleep 2
 	printf '\n'
 	echo "-Install latest node.js via nvm-"
 	printf '\n'
-	if [[ `node -v` == `$NVM_DIR/nvm.sh ls node | head -1 | awk '{print $2}'` ]]; then # nvm compare
-		echo "Already on the latest version of node.js:" `node -v`
+	if [[ `. $NVM_DIR/nvm.sh && nvm ls` =~ `. $NVM_DIR/nvm.sh && nvm ls node | head -1 | awk '{print $2}'` ]]; then # nvm compare
+		echo "Already on the latest version of node.js:" `. $NVM_DIR/nvm.sh && nvm ls | head -1    | awk '{print $2}'`
 	else 
 		echo "New version of node.js is available..."
 		printf '\n'
-		echo "Current version of node.js:" `node -v`
-		echo "Latest version of node.js:" `$NVM_DIR/nvm.sh ls node | head -1 | awk '{print $2}'`
+		echo "Current version of node.js:" `. $NVM_DIR/nvm.sh && nvm ls | head -1| awk '{print $2}'`
+		echo "Latest version of node.js:" `. $NVM_DIR/nvm.sh && nvm ls node | head -1 | awk '{print $2}'`
 		printf '\n'
 
-		read -p "Do you want to update node.js to `$NVM_DIR/nvm.sh ls node | head -1 | awk '{print $2}'`? (y/n)" -n 1 -r
+		read -p "Do you want to update node.js to `. $NVM_DIR/nvm.sh && nvm ls node | head -1 | awk '{print $2}'`? (y/n)" -n 1 -r
 		if [[ $REPLY =~ ^[Yy]$ ]]; then # start nvm update check
 			printf '\n'
 			echo "Updating node.js..."
-				nvm install node
+				. $NVM_DIR/nvm.sh && nvm install node
 		elif [[ ! $REPLY =~ ^[Yy]$ ]]; then # cont. nvm update check
 			printf '\n'
 			echo "Skipping node.js update"
