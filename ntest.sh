@@ -12,7 +12,7 @@ else
 		if [[ $REPLY =~ ^[Yy]$ ]]; then
 			printf '\n'
 			sudo chown -R `whoami` /usr/local/n/versions
-			sudo chmod +x /usr/local/n/versions
+			sudo chmod u+w /usr/local/n/versions
 		else
 			echo -e '\nYou will have to use sudo every time you run n'
 		fi
@@ -27,7 +27,7 @@ else
 	}
 
 
-  # check for n current version
+  # check for n current versions
   # change path depending on custom path set or not
   if [ -z ${N_PREFIX+x} ]; then
     vers=`find /usr/local/n/versions/node -type d | sed 's|'/usr/local/n/versions'/||g' | egrep "/[0-9]+\.[0-9]+\.[0-9]+$" | sort -k 1,1 -k 2,2n -k 3,3n -t . | awk -F/ '{print $2}'`
@@ -36,23 +36,30 @@ else
   fi
 
   # print to screen current installed versions
-  echo "Installed version: $vers"
+  echo -e "Installed versions:"
+	echo "$vers"
   printf '\n'
 
   # variables check for versions available through n
-  stable=`n --stable`
   latest=`n --latest`
+  stable=`n --stable`
   lts=`n --lts`
 
-  echo "Stable is:  $stable"
   echo "Latest is:  $latest"
+  echo "Stable is:  $stable"
   echo "LTS is:     $lts"
 
   printf '\n'
 
   # ask if user wants n latest or n stable
+	# since vers is stored in a variables of all versions installed,
+	# check from highest version to lowest
   case $vers in
-    $stable*)
+
+    *$latest*)
+      echo "You are currently on Latest version" ;;
+
+    *$stable*)
       echo "You are currently on Stable version" 
 
       printf '\n'
@@ -68,7 +75,7 @@ else
         fi
 
       ;;
-    $lts*)
+    *$lts*)
       echo "You are currently on LTS version" 
       
       printf '\n'
@@ -84,8 +91,6 @@ else
         fi
 
       ;;
-    $latest*)
-      echo "You are currently on Latest version" ;;
 
     *)
       if (( $(echo "$vers $latest" |  awk '{print ($1 > $2)}') )); then
@@ -112,9 +117,8 @@ else
         fi
 
       ;;
-  esac
+  esac # end version compare and update check
 
 fi # end windows check
 
-
-#TODO set a windows only option? 
+# set a windows only option? 
