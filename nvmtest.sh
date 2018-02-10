@@ -1,5 +1,6 @@
 #!/bin/bash
 
+# check if user wants to use nvm or n to manage node.js
 echo "Preferred method to manage node.js"
 read -p "Do you want to manage node.js with nvm? (y/n) " -n 1 -r
 if [[ $REPLY =~ ^[Yy]$ ]]; then # start reply checks
@@ -7,7 +8,8 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then # start reply checks
 	echo "Using nvm to manage node.js"
 	printf '\n'
 	sleep 2
-
+  
+  # if nvm is installed, NVM_DIR should be set
 	echo "-Checking if nvm is already installed-"
 	if [ ${NVM_DIR+x} ]; then # start nvm check
 		echo "nvm is already installed..."
@@ -44,17 +46,22 @@ sleep 2
 	# Using NVM to update
 	printf '\n'
 	echo "-Install latest node.js via nvm-"
-	printf '\n'
-	if [[ `. $NVM_DIR/nvm.sh && nvm ls` =~ `. $NVM_DIR/nvm.sh && nvm ls node | head -1 | awk '{print $2}'` ]]; then # nvm compare
-		echo "Already on the latest version of node.js:" `. $NVM_DIR/nvm.sh && nvm ls | head -1    | awk '{print $2}'`
+
+  # set temp varibles for complicated command output storage
+  curr=`. $NVM_DIR/nvm.sh && nvm ls | sed 's/\x1b\[[^\x1b]*m//g' | sed -e 's/[[:alpha:]|\/\)\-\>\(|[:space:]]//g' | sed 's/[-|\*]//g' | sed '/^$/d' | tr '\012' ' '`
+  vers=`. $NVM_DIR/nvm.sh && nvm ls node | head -1 | awk '{print $2}' | cut -d v -f2 | sed 's/\x1b\[[^\x1b]*m//g'`
+vers="9.9.9"
+
+ if [[ "$curr" =~ "$vers" ]]; then # start nvm compare check 
+		echo "Already have the latest version of node.js: $vers" 
 	else 
 		echo "New version of node.js is available..."
 		printf '\n'
 		echo "Current version of node.js:" `. $NVM_DIR/nvm.sh && nvm ls | head -1| awk '{print $2}'`
-		echo "Latest version of node.js:" `. $NVM_DIR/nvm.sh && nvm ls node | head -1 | awk '{print $2}'`
+		echo "Latest version of node.js: $vers" 
 		printf '\n'
 
-		read -p "Do you want to update node.js to `. $NVM_DIR/nvm.sh && nvm ls node | head -1 | awk '{print $2}'`? (y/n)" -n 1 -r
+		read -p "Do you want to update node.js to `. $NVM_DIR/nvm.sh && nvm ls node | head -1 | awk '{print $2}'`? (y/n) " -n 1 -r
 		if [[ $REPLY =~ ^[Yy]$ ]]; then # start nvm update check
 			printf '\n'
 			echo "Updating node.js..."
@@ -65,13 +72,15 @@ sleep 2
 		fi # end reply check for node update
 	fi # end nvm compare check
 
-
+# if refuse npm, instead use n for simplicity
 
 elif [[ ! $REPLY =~ ^[Yy]$ ]]; then # cont. reply checks
-	echo "You chose not to use nvm, lets use n"
+	printf '\n'
+  echo "You chose not to use nvm, lets use n"
 
 	ncheck=`npm view n | head -2`
 	# update node itself
+  printf '\n'
 	echo "-Checking for n package installation-"
 	# check if n exists in listed packages
 	if [[ $ncheck =~ "{ name: 'n'," ]]; then # start n check
@@ -83,10 +92,20 @@ elif [[ ! $REPLY =~ ^[Yy]$ ]]; then # cont. reply checks
 		npm cache clean -f 2> /dev/null
 		npm install -g n
 	fi # end n package checks
+
+  # Now that n is installed lets check stuff. 
+  
+
 fi # end reply checks
 
+# check if the users system is windows, as N is not supported
 
 
 
+#TODO ask if user wants n latest or n stable
+
+#TODO check for n current version
 
 
+
+#TODO set a windows only option? 

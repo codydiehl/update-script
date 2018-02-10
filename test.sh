@@ -2,7 +2,7 @@
 #set -x
 
 pat1=`. $NVM_DIR/nvm.sh && nvm ls | sed 's/\x1b\[[^\x1b]*m//g' | sed -e 's/[[:alpha:]|\/\)\-\>\(|[:space:]]//g' | sed 's/[-|\*]//g' | sed '/^$/d' | tr '\012' ' '`
-pat2=`. $NVM_DIR/nvm.sh && nvm ls node | head -1 | awk '{print $2}' | cut -d v -f2 | sed 's/\x1b\[[^\x1b]*m//g'`
+pat2=`. $NVM_DIR/nvm.sh && nvm ls node | head -1 | awk '{print $2}' | cut -d v -f2`
 
 #pat1=`$pat1 sed 's/$/\$/g'`
 #pat2=`$pat2 sed 's/$/\$/g'`
@@ -46,5 +46,9 @@ fi
 printf '\n'
 echo -e "pat1 is \n$pat1" | cat -vet
 echo -e "pat2 is \n$pat2" | cat -vet
+printf '%q\n' "$pat2"
+printf '%q\n' "$pat1"
 
-
+echo 'od debug'
+od -c <<<"$pat2"
+od -c <<<"$pat1"
