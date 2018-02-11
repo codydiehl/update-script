@@ -14,7 +14,7 @@ else
 			sudo chown -R `whoami` /usr/local/n/versions
 			sudo chmod u+w /usr/local/n/versions
 		else
-			echo -e '\nYou will have to use sudo every time you run n'
+			echo -e '\nYou will have to use sudo every time you run n\n'
 		fi
 	fi
 
@@ -34,10 +34,17 @@ else
   else 
     vers=`find $N_PREFIX/n/versions/node -type d | sed 's|'/usr/local/n/versions'/||g' | egrep "/[0-9]+\.[0-9]+\.[0-9]+$" | sort -k 1,1 -k 2,2n -k 3,3n -t . | awk -F/ '{print $2}'`
   fi
-
+	
+	echo "-Checking installed Node.js Versions-"
   # print to screen current installed versions
   echo -e "Installed versions:"
-	echo "$vers"
+  if [ -z ${vers+x} ]; then
+	  echo "$vers"
+  else
+    echo "No versions are installed through n..."
+    vers=`node -v | cut -d v -f2`
+    echo "node -v : $vers" 
+  fi
   printf '\n'
 
   # variables check for versions available through n
@@ -45,11 +52,13 @@ else
   stable=`n --stable`
   lts=`n --lts`
 
+	echo "-Checking available node.js versions-"
   echo "Latest is:  $latest"
   echo "Stable is:  $stable"
   echo "LTS is:     $lts"
 
   printf '\n'
+	sleep 2
 
   # ask if user wants n latest or n stable
 	# since vers is stored in a variables of all versions installed,
@@ -63,8 +72,8 @@ else
       echo "You are currently on Stable version" 
 
       printf '\n'
-      echo "Which node.js version would you like to install?"
-      read -p "(Latest [L], LTS [T]) " -n 1 -r
+      echo "-Which node.js version would you like to install?-"
+      read -p "( Latest [L], LTS [T] ) " -n 1 -r
       printf '\n'
         if [[ $REPLY =~ ^[Ll]$ ]]; then
           install latest
@@ -79,8 +88,8 @@ else
       echo "You are currently on LTS version" 
       
       printf '\n'
-      echo "Which node.js version would you like to install?"
-      read -p "(Latest [L], Stable [S]) " -n 1 -r
+      echo "-Which node.js version would you like to install?-"
+      read -p "( Latest [L], Stable [S] ) " -n 1 -r
       printf '\n'
         if [[ $REPLY =~ ^[Ll]$ ]]; then
           install latest
@@ -100,8 +109,8 @@ else
       fi
 
       printf '\n'
-      echo "Which node.js version would you like to install?"
-      read -p "(Latest [L], Stable [S], LTS [T]) " -n 1 -r
+      echo "-Which node.js version would you like to install?-"
+      read -p "( Latest [L], Stable [S], LTS [T] ) " -n 1 -r
       printf '\n'
         if [[ $REPLY =~ ^[Ll]$ ]]; then
           echo "installing Latest"
@@ -122,3 +131,5 @@ else
 fi # end windows check
 
 # set a windows only option? 
+# scoop and chocolatey install node
+# need a check for chocolatey and scoop

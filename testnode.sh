@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # NPM update
-if hash npm 2>/dev/null; then
+if hash npm 2>/dev/null; then # check if npm exists
 
   echo "================================"
   echo " Update NPM and Packages"
